@@ -37,49 +37,27 @@ class ClienteController extends Controller
         $clientes = Cliente::all();
         return view('admin.clientes.index', compact('clientes'));
     }
-//     public function data()
-// {
-//     $clientes = Cliente::select(['id', 'nombre','correo','telefono','direccion','activo']);
-
-//     return DataTables::of($clientes)
-//         ->addIndexColumn()
-//         ->editColumn('activo', function ($row) {
-//             return $row->activo 
-//                 ? '<span class="badge bg-success">Sí</span>' 
-//                 : '<span class="badge bg-danger">No</span>';
-//         })
-//         ->addColumn('action', function ($row) {
-//             return '<div class="btn-group">
-//                         <button class="btn btn-success btn-sm editCliente" data-id="' . $row->id . '">
-//                             <i class="fas fa-pencil-alt"></i>
-//                         </button>
-//                         <button class="btn btn-danger btn-sm deleteCliente" data-id="' . $row->id . '">
-//                             <i class="fas fa-trash"></i>
-//                         </button>
-//                     </div>';
-//         })
-//         ->rawColumns(['action', 'activo'])
-//         ->make(true);
-// }
 
 
     public function data()
     {
-        $clientes = Cliente::select(['id','nombre','correo','telefono','direccion','activo']);
+        $clientes = Cliente::select(['id', 'nombre', 'correo', 'telefono', 'direccion', 'activo']);
         // return response()->json($clientes);
 
         return DataTables::of($clientes)
             ->addIndexColumn()
+
             ->addColumn('action', function ($row) {
                 return '<div class="btn-group">
-                        <button class="btn btn-success btn-sm editCliente" id="btnEdit" data-id="' . $row->id . '">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                        <button class="btn btn-danger btn-sm deleteCliente" id="btnDelete" data-id="' . $row->id . '">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>';
+                <button class="btn btn-success btn-sm btnEdit" data-id="' . $row->id . '">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button class="btn btn-danger btn-sm btnDelete" data-id="' . $row->id . '">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>';
             })
+
             ->rawColumns(['action'])
             ->make(true);
     }
@@ -102,17 +80,40 @@ class ClienteController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
-        //
+        try {
+            $validated = $request->validate([
+                'nombre' => 'required|string|max:255|unique:clientes,nombre',
+                'correo' => 'required|email|unique:clientes,correo',
+                'telefono' => 'required|unique:clientes,telefono',
+                'direccion' => 'required|string',
+            ]);
+
+            Cliente::create($validated);
+
+            return response()->json(['message' => 'Cliente creado correctamente']);
+        } catch (\Throwable $e) {
+            // Forzar mostrar error exacto en el navegador (útil para desarrollo)
+            return response()->json([
+                'message' => 'ERROR EN TIEMPO DE EJECUCIÓN',
+                'error' => $e->getMessage(),
+                'linea' => $e->getLine(),
+                'archivo' => $e->getFile(),
+            ], 500);
+        }
     }
+
+
+
 
     /**
      * Display the specified resource.
      */
-    public function show(Cliente $cliente)
+    public function show($id)
     {
-        //
+        return Cliente::findOrFail($id);
     }
 
     /**
@@ -126,16 +127,32 @@ class ClienteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cliente $cliente)
-    {
-        //
-    }
+ public function update(Request $request, $id)
+{
+    $cliente = Cliente::findOrFail($id);
+
+    $request->validate([
+        'nombre' => 'required',
+        'correo' => 'required|email|unique:clientes,correo,' . $id,
+        'telefono' => 'required|unique:clientes,telefono,' . $id,
+        'direccion' => 'required',
+    ]);
+
+    $cliente->update($request->all());
+
+    return response()->json(['message' => 'Cliente actualizado correctamente']);
+}
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Cliente $cliente)
-    {
-        //
-    }
+public function destroy($id)
+{
+    $cliente = Cliente::findOrFail($id);
+    $cliente->delete();
+
+    return response()->json(['message' => 'Cliente eliminado correctamente']);
+}
+
 }

@@ -1,9 +1,10 @@
 <script>
+    let tabla;
     $(function() {
-        let tabla = $("#clientesTable").DataTable({
+        tabla = $("#indexTable").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('admin.clientes.data') }}", // Asegúrate que esta ruta funcione
+            ajax: "{{ route('admin.empleados.data') }}", // Asegúrate que esta ruta funcione
             pageLength: 10,
             language: {
                 "emptyTable": "No hay información",
@@ -56,13 +57,10 @@
                     name: 'telefono'
                 },
                 {
-                    data: 'direccion',
-                    name: 'direccion'
+                    data: 'puesto',
+                    name: 'puesto'
                 },
-                {
-                    data: 'activo',
-                    name: 'activo'
-                },
+
 
                 {
                     data: 'action',
@@ -107,48 +105,74 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('formCliente');
-        const erroresDiv = document.getElementById('errores');
-        const cardFormulario = document.getElementById('cardFormulario');
-        const btnMostrarFormulario = document.getElementById('btnMostrarFormulario');
-        const btnCancelar = document.getElementById('btnCancelar');
+        const btnCreate = document.getElementById('btnCreate');
+        // const form = document.getElementById('formCliente');
+        // const erroresDiv = document.getElementById('errores');
+        // const cardFormulario = document.getElementById('cardFormulario');
+        // const btnMostrarFormulario = document.getElementById('btnMostrarFormulario');
+        // const btnCancelar = document.getElementById('btnCancelar');
         const btnEdit = document.getElementById('btnEdit');
-        const btnDelete = document.getElementById('btnDelete');
-        const urlEdit = "{{ url('admin/clientes') }}/";
-        const urlCreate = "{{ url('admin/clientes') }}";
+        // const btnDelete = document.getElementById('btnDelete');
+        const urlEdit = "{{ url('admin/empleados') }}/";
+        const urlCreate = "{{ url('admin/empleados') }}";
 
-        // ver formulario 
-        btnMostrarFormulario.addEventListener('click', () => {
-            cardFormulario.style.display = 'block';
-            $('#formCliente')[0].reset();
-            $('#formTitulo').text('Nuevo Cliente');
-             $('#id').val('');
-        });
-        // cancelar
-        btnCancelar.addEventListener('click', () => {
-            cardFormulario.style.display = 'none';
+        btnCreate.addEventListener('click', openModal);
+
+           function openModal() {
+            $('#empleadoId').val('');
+            $('#nombre').val('');
+            $('#correo').val('');
+            $('#telefono').val('');
+            $('#puesto').val('');
+            $('#empleadoModal').modal('show');
+        }
+
+        $('#empleadoForm').submit(function(e) {
+            e.preventDefault();
+            let id = $('#empleadoId').val();
+            let url = id ? urlEdit + id : urlCreate;
+            let method = id ? 'PUT' : 'POST';
+
+            $.ajax({
+                url: url,
+                type: method,
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    nombre: $('#nombre').val(),
+                    correo: $('#correo').val(),
+                    telefono: $('#telefono').val(),
+                    puesto: $('#puesto').val(),
+                    _method: method
+                },
+                success: function() {
+                    $('#empleadoModal').modal('hide');
+                    $('#empleadoForm')[0].reset();
+                    tabla.ajax.reload();
+                    Swal.fire('Éxito', 'Empleado guardado', 'success');
+                }
+            });
         });
 
-        // metodo abrir el formulario para editar 
+     
+
         $(document).on('click', '.btnEdit', function() {
-            // console.log(data.id); 
             const id = $(this).data('id');
-            $.get(urlEdit + id , function(data) {
-                $('#id').val(data.id);
-                $('#nombre').val(data.nombre);
-                $('#correo').val(data.correo);
-                $('#telefono').val(data.telefono);
-                $('#direccion').val(data.direccion);
-                $('#cardFormulario').show();
-                $('#formTitulo').text('Editar Cliente');
+
+
+            $.get(urlEdit + id, function(emp) {
+                $('#empleadoId').val(emp.id);
+                $('#nombre').val(emp.nombre);
+                $('#correo').val(emp.correo);
+                $('#telefono').val(emp.telefono);
+                $('#puesto').val(emp.puesto);
+                $('#empleadoModal').modal('show');
             });
         });
 
         // metodopara enviar para actualizar
-        $('#formCliente').submit(function(e) {
+        $('#empleadoForm').submit(function(e) {
             e.preventDefault();
-
-            const id = $('#id').val();
+            const id = $('#empleadoId').val();
 
             const url = id ? urlEdit + id : urlCreate;
             const method = id ? 'PUT' : 'POST';
@@ -158,16 +182,17 @@
 
             $.ajax({
                 url: url,
-                type: 'POST',
+                type:method,
                 data: formData,
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 },
                 success: function(response) {
                     Swal.fire('Éxito', response.message, 'success');
-                    $('#formCliente')[0].reset();
-                    $('#cardFormulario').hide();
-                    $('#clientesTable').DataTable().ajax.reload();
+                    $('#empleadoForm')[0].reset();
+                    // $('#cardFormulario').hide();
+                      $('#empleadoModal').modal('hide');
+                    tabla.ajax.reload();
                 },
                 error: function(xhr) {
                     Swal.fire('Error', 'No se pudo guardar.', 'error');
@@ -192,8 +217,9 @@
                     fetch(url, {
                             method: 'DELETE',
                             headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
-                                    'content'),
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
+                                    .attr(
+                                        'content'),
                                 'Content-Type': 'application/json',
                             }
                         })
@@ -203,11 +229,13 @@
                             $('#clientesTable').DataTable().ajax.reload();
                         })
                         .catch(error => {
-                            Swal.fire('Error', 'No se pudo eliminar al cliente.', 'error');
+                            Swal.fire('Error',
+                                'No se pudo eliminar al cliente.', 'error');
                             console.error(error);
                         });
                 }
             });
         });
     });
+    
 </script>

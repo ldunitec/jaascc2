@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MensualidadController;
 use App\Http\Controllers\PlanController;
@@ -19,10 +20,29 @@ Route::get('/admin', [App\Http\Controllers\AdminController::class, 'index'])->na
 
 
 
-// rutas mensualidad
-Route::get('/admin/clientes/data', [ClienteController::class, 'data'])->name('admin.clientes.data');
+// rutas clientes
+Route::get('/admin/clientes/data', [ClienteController::class, 'data'])->name('admin.clientes.data')->middleware('auth');
+Route::get('/admin/clientes', [ClienteController::class, 'index'])->name('admin.clientes.index')->middleware('auth');
 Route::get('/admin/clientes/list', [ClienteController::class, 'list'])->name('admin.clientes.list')->middleware('auth');
-Route::resource('admin/clientes',ClienteController::class)->names('admin.clientes')->middleware('auth');
+Route::get('/admin/clientes/{id}', [ClienteController::class, 'show'])->name('admin.clientes.show')->middleware('auth');
+Route::post('/admin/clientes', [ClienteController::class, 'store'])->name('admin.clientes.store')->middleware('auth');
+Route::put('/admin/clientes/{id}', [ClienteController::class, 'update'])->name('admin.clientes.update')->middleware('auth');
+Route::delete('/admin/clientes/{id}', [ClienteController::class, 'destroy'])->name('admin.clientes.destroy')->middleware('auth');
+
+
+// rutas empleados 
+Route::get('/admin/empleados', [EmpleadoController::class, 'index'])->name('admin.empleados.index')->middleware('auth');
+Route::get('/admin/empleados/data', [EmpleadoController::class, 'data'])->name('admin.empleados.data')->middleware('auth');
+Route::post('/admin/empleados', [EmpleadoController::class, 'store'])->name('admin.empleados.store')->middleware('auth');
+Route::get('/admin/empleados/{id}', [EmpleadoController::class, 'show'])->name('admin.empleados.show')->middleware('auth');
+Route::put('/admin/empleados/{id}', [EmpleadoController::class, 'update'])->name('admin.empleados.update')->middleware('auth');
+Route::delete('/admin/empleados/{id}', [EmpleadoController::class, 'destroy'])->name('admin.empleados.destroy')->middleware('auth');
+
+
+
+
+
+
 Route::get('/admin/clientes/{id}/historial', [ClienteController::class, 'historial'])->name('admin.clientes.historial')->middleware('auth');
 
 // rutas planes

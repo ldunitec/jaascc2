@@ -331,7 +331,12 @@ return [
         [
             'text' => 'Clientes',
             'url' => 'admin/clientes',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-fw fa-users',
+        ],
+        [
+            'text' => 'Empleados',
+            'url' => 'admin/empleados',
+            'icon' => 'fas fa-fw fa-users',
         ],
         [
             'text' => 'Recibo',
@@ -435,7 +440,7 @@ return [
 
     'plugins' => [
         'Datatables' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
@@ -500,7 +505,7 @@ return [
             ],
         ],
         'Select2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
@@ -525,7 +530,7 @@ return [
             ],
         ],
         'Sweetalert2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
