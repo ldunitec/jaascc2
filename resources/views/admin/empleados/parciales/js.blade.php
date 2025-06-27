@@ -112,13 +112,13 @@
         // const btnMostrarFormulario = document.getElementById('btnMostrarFormulario');
         // const btnCancelar = document.getElementById('btnCancelar');
         const btnEdit = document.getElementById('btnEdit');
-        // const btnDelete = document.getElementById('btnDelete');
+        const btnDelete = document.getElementById('btnDelete');
         const urlEdit = "{{ url('admin/empleados') }}/";
         const urlCreate = "{{ url('admin/empleados') }}";
 
         btnCreate.addEventListener('click', openModal);
 
-           function openModal() {
+        function openModal() {
             $('#empleadoId').val('');
             $('#nombre').val('');
             $('#correo').val('');
@@ -153,7 +153,7 @@
             });
         });
 
-     
+
 
         $(document).on('click', '.btnEdit', function() {
             const id = $(this).data('id');
@@ -182,7 +182,7 @@
 
             $.ajax({
                 url: url,
-                type:method,
+                type: method,
                 data: formData,
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
@@ -191,7 +191,7 @@
                     Swal.fire('Éxito', response.message, 'success');
                     $('#empleadoForm')[0].reset();
                     // $('#cardFormulario').hide();
-                      $('#empleadoModal').modal('hide');
+                    $('#empleadoModal').modal('hide');
                     tabla.ajax.reload();
                 },
                 error: function(xhr) {
@@ -203,17 +203,10 @@
 
         $(document).on('click', '.btnDelete', function() {
             const id = $(this).data('id');
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¡Esta acción no se puede deshacer!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, eliminar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const url = `/admin/clientes/${id}`;
+            console.log(id);
+            
+            
+                    const url = "{{ url('admin/empleados') }}/" + id;
                     fetch(url, {
                             method: 'DELETE',
                             headers: {
@@ -223,19 +216,20 @@
                                 'Content-Type': 'application/json',
                             }
                         })
+                  
                         .then(response => response.json())
                         .then(data => {
                             Swal.fire('Eliminado', data.message, 'success');
-                            $('#clientesTable').DataTable().ajax.reload();
+                            // $('#clientesTable').DataTable().ajax.reload();
+                                   tabla.ajax.reload();
                         })
                         .catch(error => {
                             Swal.fire('Error',
                                 'No se pudo eliminar al cliente.', 'error');
                             console.error(error);
                         });
-                }
+                });
             });
-        });
-    });
-    
+    //     });
+    // });
 </script>

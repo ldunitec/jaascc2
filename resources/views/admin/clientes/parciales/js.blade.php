@@ -122,7 +122,7 @@
             cardFormulario.style.display = 'block';
             $('#formCliente')[0].reset();
             $('#formTitulo').text('Nuevo Cliente');
-             $('#id').val('');
+            $('#id').val('');
         });
         // cancelar
         btnCancelar.addEventListener('click', () => {
@@ -133,7 +133,7 @@
         $(document).on('click', '.btnEdit', function() {
             // console.log(data.id); 
             const id = $(this).data('id');
-            $.get(urlEdit + id , function(data) {
+            $.get(urlEdit + id, function(data) {
                 $('#id').val(data.id);
                 $('#nombre').val(data.nombre);
                 $('#correo').val(data.correo);
@@ -178,26 +178,25 @@
 
         $(document).on('click', '.btnDelete', function() {
             const id = $(this).data('id');
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¡Esta acción no se puede deshacer!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, eliminar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const url = `/admin/clientes/${id}`;
-                    fetch(url, {
+            // Swal.fire({
+            //     title: '¿Estás seguro?',
+            //     text: "¡Esta acción no se puede deshacer!",
+            //     // icon: 'warning',
+            //     showCancelButton: true,
+            //     confirmButtonColor: '#d33',
+            //     cancelButtonColor: '#3085d6',
+            //     confirmButtonText: 'Sí, eliminar'
+            // }).then((result) => {
+                // if (result.isConfirmed) {
+                       const url = "{{ url('admin/clientes') }}/" + id;
+                        fetch(url, {
                             method: 'DELETE',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
                                     'content'),
                                 'Content-Type': 'application/json',
                             }
-                        })
-                        .then(response => response.json())
+                        }).then(response => response.json())
                         .then(data => {
                             Swal.fire('Eliminado', data.message, 'success');
                             $('#clientesTable').DataTable().ajax.reload();
@@ -206,8 +205,8 @@
                             Swal.fire('Error', 'No se pudo eliminar al cliente.', 'error');
                             console.error(error);
                         });
-                }
+                // }
             });
         });
-    });
+    // });
 </script>
