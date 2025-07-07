@@ -49,6 +49,12 @@ class ClienteController extends Controller
 
             ->addColumn('action', function ($row) {
                 return '<div class="btn-group">
+                <button class="btn btn-info btn-sm btnPago" data-id="' . $row->id . '">
+                    <i class="fas fa-coins"></i>
+                </button>
+                <button class="btn btn-warning btn-sm btnHist" data-id="' . $row->id . '">
+                    <i class="fas fa-book"></i>
+                </button>
                 <button class="btn btn-success btn-sm btnEdit" data-id="' . $row->id . '">
                     <i class="fas fa-pencil-alt"></i>
                 </button>

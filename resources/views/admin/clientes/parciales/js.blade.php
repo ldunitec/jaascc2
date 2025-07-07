@@ -112,26 +112,57 @@
         const cardFormulario = document.getElementById('cardFormulario');
         const btnMostrarFormulario = document.getElementById('btnMostrarFormulario');
         const btnCancelar = document.getElementById('btnCancelar');
+        const btnHist = document.getElementById('btnHist');
+        const btnPago = document.getElementById('btnPago');
         const btnEdit = document.getElementById('btnEdit');
         const btnDelete = document.getElementById('btnDelete');
         const urlEdit = "{{ url('admin/clientes') }}/";
         const urlCreate = "{{ url('admin/clientes') }}";
+        const urlHistorial = "{{ url('admin/clientes') }}";
+        const colFormulario = document.getElementById('colFormulario');
 
         // ver formulario 
         btnMostrarFormulario.addEventListener('click', () => {
+            console.log('Boton presionado');
             cardFormulario.style.display = 'block';
             $('#formCliente')[0].reset();
             $('#formTitulo').text('Nuevo Cliente');
             $('#id').val('');
+            colFormulario.classList.remove('col-md-12');
+            colFormulario.classList.add('col-md-8');
         });
         // cancelar
         btnCancelar.addEventListener('click', () => {
             cardFormulario.style.display = 'none';
+            colFormulario.classList.remove('col-md-8');
+            colFormulario.classList.add('col-md-12');
+        });
+
+
+        //historial
+
+        $(document).on('click', '.btnHist', function() {
+            const id = $(this).data('id');
+            const url = "{{ route('admin.clientes.historial', ':id') }}".replace(':id', id);
+
+            // Redirigir o usar Ajax
+            window.location.href = url;
+        });
+        //pago
+
+        $(document).on('click', '.btnPago', function() {
+            const id = $(this).data('id');
+            const url = "{{ route('admin.clientes.pagar', ':id') }}".replace(':id', id);
+
+            // Redirigir o usar Ajax
+            window.location.href = url;
         });
 
         // metodo abrir el formulario para editar 
         $(document).on('click', '.btnEdit', function() {
             // console.log(data.id); 
+            colFormulario.classList.remove('col-md-12');
+            colFormulario.classList.add('col-md-8');
             const id = $(this).data('id');
             $.get(urlEdit + id, function(data) {
                 $('#id').val(data.id);
@@ -164,6 +195,8 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 },
                 success: function(response) {
+                    colFormulario.classList.remove('col-md-8');
+                    colFormulario.classList.add('col-md-12');
                     Swal.fire('Éxito', response.message, 'success');
                     $('#formCliente')[0].reset();
                     $('#cardFormulario').hide();
@@ -187,26 +220,25 @@
             //     cancelButtonColor: '#3085d6',
             //     confirmButtonText: 'Sí, eliminar'
             // }).then((result) => {
-                // if (result.isConfirmed) {
-                       const url = "{{ url('admin/clientes') }}/" + id;
-                        fetch(url, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
-                                    'content'),
-                                'Content-Type': 'application/json',
-                            }
-                        }).then(response => response.json())
-                        .then(data => {
-                            Swal.fire('Eliminado', data.message, 'success');
-                            $('#clientesTable').DataTable().ajax.reload();
-                        })
-                        .catch(error => {
-                            Swal.fire('Error', 'No se pudo eliminar al cliente.', 'error');
-                            console.error(error);
-                        });
-                // }
-            });
+            // if (result.isConfirmed) {
+            const url = "{{ url('admin/clientes') }}/" + id;
+            fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                            'content'),
+                        'Content-Type': 'application/json',
+                    }
+                }).then(response => response.json())
+                .then(data => {
+                    Swal.fire('Eliminado', data.message, 'success');
+                    $('#clientesTable').DataTable().ajax.reload();
+                })
+                .catch(error => {
+                    Swal.fire('Error', 'No se pudo eliminar al cliente.', 'error');
+                    console.error(error);
+                });
+            // }
         });
-    // });
+    });
 </script>

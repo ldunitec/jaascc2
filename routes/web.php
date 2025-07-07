@@ -4,6 +4,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MensualidadController;
+use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ReciboController;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +31,10 @@ Route::put('/admin/clientes/{id}', [ClienteController::class, 'update'])->name('
 Route::delete('/admin/clientes/{id}', [ClienteController::class, 'destroy'])->name('admin.clientes.destroy')->middleware('auth');
 
 
+Route::get('admin/clientes/{cliente}/historial', [PagoController::class, 'historial'])->name('admin.clientes.historial');
+Route::get('admin/clientes/{cliente}/pagar', [PagoController::class, 'pagar'])->name('admin.clientes.pagar');
+Route::post('admin/pagos/store', [PagoController::class, 'store'])->name('admin.pagos.store');
+
 // rutas empleados 
 Route::get('/admin/empleados', [EmpleadoController::class, 'index'])->name('admin.empleados.index')->middleware('auth');
 Route::get('/admin/empleados/data', [EmpleadoController::class, 'data'])->name('admin.empleados.data')->middleware('auth');
@@ -54,3 +59,6 @@ Route::post('/admin/clientes/{id}/pagar', [MensualidadController::class, 'realiz
 Route::get('/admin/recibos/{id}', [ReciboController::class, 'ver'])->name('admin.recibos.ver');
 Route::get('/admin/recibos/{id}/pdf', [ReciboController::class, 'generarPDF'])->name('admin.recibos.pdf');
 Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard.index');
+
+
+
