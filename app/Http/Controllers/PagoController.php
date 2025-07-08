@@ -28,25 +28,54 @@ class PagoController extends Controller
 
 public function pagar(Cliente $cliente)
 {
-    return view('admin.pagos.pagar', compact('cliente'));
-}
+    $historial = collect();
+    $inicio = now()->subYears(1)->startOfYear();
+    $actual = now()->startOfMonth();
 
+    while ($inicio <= $actual) {
+        $historial->push($inicio->copy());
+        $inicio->addMonth();
+    }
+    return view('admin.pagos.pagar', compact('cliente', 'historial'));
+}
 public function store(Request $request)
 {
-    $request->validate([
+    $validated = $request->validate([
         'cliente_id' => 'required|exists:clientes,id',
         'meses' => 'required|array',
+        'metodo_pago' => 'required|string',
+        'referencia' => 'nullable|string|max:100'
     ]);
 
     foreach ($request->meses as $mes) {
-        Pago::updateOrCreate([
+        Pago::create([
             'cliente_id' => $request->cliente_id,
-            'mes_pago' => $mes . '-01'
-        ], ['monto' => 100]);
+            'mes_pago' => $mes,
+            'metodo_pago' => $request->metodo_pago,
+            'referencia' => in_array($request->metodo_pago, ['Transferencia', 'Deposito']) ? $request->referencia : null,
+            'created_at' => now(),
+        ]);
     }
 
-    return redirect()->route('admin.clientes.index')->with('success', 'Pago registrado correctamente');
+    return redirect()->back()->with('success', 'Pago registrado correctamente.');
 }
+ 
+// public function store(Request $request)
+// {
+//     $request->validate([
+//         'cliente_id' => 'required|exists:clientes,id',
+//         'meses' => 'required|array',
+//     ]);
+
+//     foreach ($request->meses as $mes) {
+//         Pago::updateOrCreate([
+//             'cliente_id' => $request->cliente_id,
+//             'mes_pago' => $mes . '-01'
+//         ], ['monto' => 100]);
+//     }
+
+//     return redirect()->route('admin.clientes.index')->with('success', 'Pago registrado correctamente');
+// }
     public function index()
     {
         //

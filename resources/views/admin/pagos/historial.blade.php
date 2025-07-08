@@ -2,18 +2,33 @@
 
 @section('content')
 <h3>Historial de Pagos - {{ $cliente->nombre }}</h3>
+
+@php
+    $pagosPorAño = $cliente->pagos->sortByDesc('created_at')->groupBy(function($pago) {
+        return \Carbon\Carbon::parse($pago->created_at)->format('Y');
+    });
+@endphp
+
 <table class="table table-bordered table-sm">
-    <thead><tr><th>Mes</th><th>Estado</th></tr></thead>
+    <thead>
+        <tr>
+            <th>Fecha de Registro</th>
+            <th>Mes Pagado</th>
+            <th>Monto</th>
+        </tr>
+    </thead>
     <tbody>
-        @foreach($historial->sortDesc() as $mes)
-            @php
-                $pagado = $cliente->pagos->pluck('mes_pago')->contains($mes->format('Y-m-d'));
-                $enMora = !$pagado && $mes <= now();
-            @endphp
-            <tr class="{{ $enMora ? 'table-danger' : '' }}">
-                <td>{{ $mes->format('F Y') }}</td>
-                <td>{{ $pagado ? 'Pagado' : ($enMora ? 'En mora' : 'Pendiente') }}</td>
+        @foreach($pagosPorAño as $año => $pagos)
+            <tr class="table-primary">
+                <th colspan="3">{{ $año }}</th>
             </tr>
+            @foreach($pagos as $pago)
+                <tr>
+                    <td>{{ \Carbon\Carbon::parse($pago->created_at)->format('d/m/Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($pago->mes_pago)->translatedFormat('F Y') }}</td>
+                    <td>{{ $pago->monto ?? '—' }}</td>
+                </tr>
+            @endforeach
         @endforeach
     </tbody>
 </table>
