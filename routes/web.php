@@ -34,6 +34,8 @@ Route::delete('/admin/clientes/{id}', [ClienteController::class, 'destroy'])->na
 Route::get('admin/clientes/{cliente}/historial', [PagoController::class, 'historial'])->name('admin.clientes.historial');
 Route::get('admin/clientes/{cliente}/pagar', [PagoController::class, 'pagar'])->name('admin.clientes.pagar');
 Route::post('admin/pagos/store', [PagoController::class, 'store'])->name('admin.pagos.store');
+Route::post('admin/pagos/guardar-pdf', [App\Http\Controllers\PagoController::class, 'guardar'])->name('admin.pagos.guardar');
+
 
 // rutas empleados 
 Route::get('/admin/empleados', [EmpleadoController::class, 'index'])->name('admin.empleados.index')->middleware('auth');
@@ -48,7 +50,7 @@ Route::delete('/admin/empleados/{id}', [EmpleadoController::class, 'destroy'])->
 
 
 
-Route::get('/admin/clientes/{id}/historial', [ClienteController::class, 'historial'])->name('admin.clientes.historial')->middleware('auth');
+// Route::get('/admin/clientes/{id}/historial', [ClienteController::class, 'historial'])->name('admin.clientes.historial')->middleware('auth');
 
 // rutas planes
 Route::resource('admin/planes', PlanController::class)->names('planes')->middleware('auth');

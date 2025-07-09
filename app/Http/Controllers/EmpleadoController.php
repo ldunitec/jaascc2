@@ -15,7 +15,7 @@ class EmpleadoController extends Controller
     }
 
     public function data()
-    
+
     {
         $empleados = Empleado::select(['id', 'nombre', 'correo', 'telefono', 'puesto']);
         // return response()->json($empleados);
@@ -37,7 +37,7 @@ class EmpleadoController extends Controller
             ->rawColumns(['action'])
             ->make(true);
     }
-    
+
 
     public function store(Request $request)
     {
