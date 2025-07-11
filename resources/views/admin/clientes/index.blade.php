@@ -27,6 +27,7 @@
                                 <tr>
                                     <th style="text-align: center">Nro</th>
                                     <th>Nombre del cliente</th>
+                                    <th>Dni</th>
                                     <th>Correo</th>
                                     <th>Telefono</th>
                                     <th>Direccion</th>
@@ -34,7 +35,7 @@
                                     <th style="text-align: center">Acción</th>
                                 </tr>
                             </thead>
-
+<a href=""></a>
                         </table>
                     </div>
                     <!-- /.card-body -->

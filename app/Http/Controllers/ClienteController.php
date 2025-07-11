@@ -41,7 +41,7 @@ class ClienteController extends Controller
 
     public function data()
     {
-        $clientes = Cliente::select(['id', 'nombre', 'correo', 'telefono', 'direccion', 'activo']);
+        $clientes = Cliente::select(['id', 'nombre', 'dni', 'correo', 'telefono', 'direccion', 'activo']);
         // return response()->json($clientes);
 
         return DataTables::of($clientes)

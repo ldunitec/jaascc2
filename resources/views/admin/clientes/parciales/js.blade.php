@@ -47,6 +47,10 @@
                     data: 'nombre',
                     name: 'nombre'
                 },
+                 {
+                    data: 'dni',
+                    name: 'dni'
+                },
                 {
                     data: 'correo',
                     name: 'correo'

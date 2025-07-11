@@ -35,6 +35,7 @@ Route::get('admin/clientes/{cliente}/historial', [PagoController::class, 'histor
 Route::get('admin/clientes/{cliente}/pagar', [PagoController::class, 'pagar'])->name('admin.clientes.pagar');
 Route::post('admin/pagos/store', [PagoController::class, 'store'])->name('admin.pagos.store');
 Route::post('admin/pagos/guardar-pdf', [App\Http\Controllers\PagoController::class, 'guardar'])->name('admin.pagos.guardar');
+Route::post('admin/pagos/recibo', [App\Http\Controllers\PagoController::class, 'store'])->name('admin.pagos.recibo');
 
 
 // rutas empleados 

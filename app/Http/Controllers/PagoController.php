@@ -7,6 +7,8 @@ use App\Models\Pago;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\DataTables;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 class PagoController extends Controller
 {
@@ -28,23 +30,41 @@ class PagoController extends Controller
         // return view('admin.pagos.historial', compact('cliente', 'historial'));
     }
     public function guardar(Request $request)
-    {
-        $nombre = $request->input('nombre');
-        $base64 = $request->input('base64pdf');
+{
+    try {
+        $request->validate([
+            'base64pdf' => 'required|string',
+            'nombre' => 'required|string',
+        ]);
 
-        // Guardar PDF en disco
-        $ruta =
-            public_path("/pdfs/{$nombre}");
-        Storage::put($ruta, base64_decode($base64));
+        $nombreArchivo = preg_replace('/[^a-zA-Z0-9_\-.]/', '', $request->nombre);
+        $pdfData = base64_decode($request->base64pdf, true);
 
-        // Retornar URL pública
-        $url = asset("storage/pdfs/{$nombre}");
+        if ($pdfData === false) {
+            return response()->json(['error' => 'Base64 inválido'], 422);
+        }
+
+        // ✅ Ruta relativa correcta (NO uses public_path aquí)
+        $ruta = 'pdfs/' . $nombreArchivo;
+
+        // ✅ Guarda en storage/app/public/pdfs
+        Storage::disk('public')->put($ruta, $pdfData);
+
+        // ✅ Devuelve URL pública
+        $url = asset('storage/' . $ruta);
+
         return response()->json($url);
+    } catch (\Exception $e) {
+        // \Log::error('Error al guardar PDF: ' . $e->getMessage());
+        return response()->json(['error' => 'Error interno: ' . $e->getMessage()], 500);
     }
+}
+
 
 
     public function pagar(Cliente $cliente)
     {
+         Carbon::setLocale('es'); // Establece español
         $historial = collect();
         $inicio = now()->subYears(1)->startOfYear();
         $actual = now()->startOfMonth();
@@ -56,33 +76,54 @@ class PagoController extends Controller
         }
         return view('admin.pagos.pagar', compact('cliente', 'historial', 'recibo'));
     }
-    public function store(Request $request)
-    {
-        // $datos= $request->all();
-        // return response()->json($datos);
 
-        $validated = $request->validate([
-            'cliente_id' => 'required|exists:clientes,id',
-            'meses' => 'required|array',
-            'recibo' => 'required|string',
-            'metodo_pago' => 'required|string',
-            'referencia' => 'nullable|string|max:100'
+
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'cliente_id' => 'required|exists:clientes,id',
+        'meses' => 'required|array',
+        'recibo' => 'required|string',
+        'metodo_pago' => 'required|string',
+        'referencia' => 'nullable'
+    ]);
+
+    $cliente = Cliente::findOrFail($request->cliente_id);
+
+    $mesesPagados = [];
+
+    foreach ($request->meses as $mes) {
+        $mesFormateado = \Carbon\Carbon::createFromFormat('Y-m', $mes)->startOfMonth();
+        Pago::create([
+            'cliente_id' => $request->cliente_id,
+            'mes_pago' => $mesFormateado->toDateString(),
+            'recibo' => $request->recibo,
+            'metodo_pago' => $request->metodo_pago,
+            'referencia' => in_array($request->metodo_pago, ['Transferencia', 'Deposito']) ? $request->referencia : null,
+            'created_at' => now(),
         ]);
 
-        foreach ($request->meses as $mes) {
-            $mesFormateado = \Carbon\Carbon::createFromFormat('Y-m', $mes)->startOfMonth()->toDateString();
-            Pago::create([
-                'cliente_id' => $request->cliente_id,
-                'mes_pago' => $mesFormateado,
-                'recibo' => $request->recibo,
-                'metodo_pago' => $request->metodo_pago,
-                'referencia' => in_array($request->metodo_pago, ['Transferencia', 'Deposito']) ? $request->referencia : null,
-                'created_at' => now(),
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'Pago registrado correctamente.');
+        $mesesPagados[] = $mesFormateado->translatedFormat('F Y');
     }
+
+    // Total pagado
+    $montoTotal = count($mesesPagados) * 100; // suponiendo Lps. 100 por mes
+
+    // Generar el PDF
+    $pdf = Pdf::loadView('admin.pagos.recibo', [
+        'cliente' => $cliente,
+        'recibo' => $request->recibo,
+        'fecha' => now()->format('d/m/Y'),
+        'monto' => $montoTotal,
+        'metodo_pago' => $request->metodo_pago,
+        'referencia' => $request->referencia,
+        'meses' => $mesesPagados
+    ]);
+
+    // return $pdf->download('recibo_' . $cliente->dni . '.pdf'); // o ->download(...) si prefieres descarga directa
+return view('admin.clientes.index');
+}
+
 
     // public function store(Request $request)
     // {

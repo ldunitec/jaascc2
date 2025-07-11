@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('pagos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('cliente_id')->constrained()->onDelete('cascade');
-            $table->date('mes_pago')->unique(); // Ej: 2025-05-01
+            $table->date('mes_pago');
             $table->string('metodo_pago')->default('Efectivo'); 
-            $table->string('referencia'); 
+            $table->string('referencia')->nullable(); 
             $table->integer('recibo'); 
             $table->decimal('monto', 8, 2)->default(100.00);
             $table->timestamps();

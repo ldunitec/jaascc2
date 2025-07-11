@@ -7,7 +7,7 @@
             <h3>{{ $cliente->nombre }}</h3>
             <div class="row">
                 <div class="col-md-1">Dni:</div>
-                <div class="col-md-1"><b>{{ $cliente->dni }}</b></div>
+                <div class="col-md-2"><b>{{ $cliente->dni }}</b></div>
                 <div class="col-md-1">Telefono:</div>
                 <div class="col-md-2"><b>{{ $cliente->telefono }}</b></div>
                 <div class="col-md-1">Direccion:</div>
@@ -54,18 +54,21 @@
         <input type="hidden" name="cliente_id" value="{{ $cliente->id }}">
 
         <div class="row">
-            @foreach ($mesesAgrupados as $anio => $meses)
-                <div class="col-md-12">
+            <div class="col-md-12">
+                @foreach ($mesesAgrupados as $anio => $meses)
                     <div class="card card-primary">
                         <div class="card-header">
-                            <div>
-                                <h5 class="mb-0">Año {{ $anio }}</h5>
-                            </div>
-
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
-                                        class="fas fa-minus"></i>
-                                </button>
+                            <div class="row">
+                                <div class="col-md-11">
+                                    <div>
+                                        <h5 class="mb-0">Año {{ $anio }}</h5>
+                                    </div>
+                                </div>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
+                                            class="fas fa-minus"></i>
+                                    </button>
+                                </div>
                             </div>
                             <!-- /.card-tools -->
                         </div>
@@ -85,17 +88,28 @@
                         </div>
                         <!-- /.card-body -->
                     </div>
-
-                </div>
-            @endforeach
+                @endforeach
+            </div>
         </div>
         <div class="row">
             <div class="col-md-3">
                 <div>
                     <label>Recibo #:</label>
-                    <input type="text" class="form-control" value="{{ $recibo->recibo + 1 }}" name="recibo"
-                        id="recibo" required>
+                    {{-- isset($recibo) → Verifica que la variable existe y no es null.
+
+!is_null($recibo->recibo) → Asegura que recibo tiene un valor válido para incrementar.
+
+Si $recibo n --}}
+                    @if (isset($recibo) && !is_null($recibo->recibo))
+                        <input type="text" class="form-control" value="{{ $recibo->recibo + 1 }}" name="recibo"
+                            id="recibo" required>
+                    @else
+                        <input type="text" class="form-control" value="00001" name="recibo" id="recibo" required>
+                    @endif
                 </div>
+
+
+
             </div>
             <div class="col-md-4">
                 <div class="form-group">
@@ -551,7 +565,7 @@
                     }]
                 });
             });
-        </script> --}}
+  </script> --}}
 
         <script>
             const cliente = @json($cliente);
@@ -624,22 +638,30 @@
                         }
                     ]
                 };
-                 const url = "{{ url('admin/pagos/guardar-pdf') }}";
+                const url = "{{ url('admin/pagos/guardar-pdf') }}";
                 pdfMake.createPdf(docDefinition).getBase64(function(base64) {
                     $.post(url, {
                         _token: '{{ csrf_token() }}',
                         base64pdf: base64,
                         nombre: 'historial_' + cliente.dni + '.pdf'
-                    }, function(urlFinal) {
-                        const mensaje =
-                            `Hola *${cliente.nombre}*, aquí está tu comprobante de pago:\n${urlFinal}`;
-                        const telefono = cliente.telefono.replace(/[^0-9]/g, ''); // Limpiar caracteres
-                        const enlace =
-                            `https://web.whatsapp.com/send?phone=+504${telefono}&text=${encodeURIComponent(mensaje)}`;
-                        window.open(enlace, '_blank');
+                    }).done(function() {
+                        // Esperamos un poco para que el backend termine de guardar (opcional)
+                        setTimeout(() => {
+                            location.reload(); // Recargar la página después de guardar el PDF
+                        }, 500);
+                    }).fail(function() {
+                        alert('Error al guardar el PDF.');
                     });
+
+                    // ,function(urlFinal) {
+                    //     const mensaje =
+                    //         `Hola *${cliente.nombre}*, aquí está tu comprobante de pago:\n${urlFinal}`;
+                    //     const telefono = cliente.telefono.replace(/[^0-9]/g, ''); // Limpiar caracteres
+                    //     const enlace =
+                    //         `https://web.whatsapp.com/send?phone=+504${telefono}&text=${encodeURIComponent(mensaje)}`;
+                    //     window.open(enlace, '_blank');
+
                 });
             });
         </script>
-
     @endsection
