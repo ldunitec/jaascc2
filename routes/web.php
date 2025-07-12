@@ -16,13 +16,16 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\AdminController::class, 'index'])->name('home')->middleware('auth');
+Route::get('/home', [App\Http\Controllers\DashboardController::class, 'index'])->name('home')->middleware('auth');
 Route::get('/admin', [App\Http\Controllers\AdminController::class, 'index'])->name('admin')->middleware('auth');
 
 
 
 // rutas clientes
 Route::get('/admin/clientes/data', [ClienteController::class, 'data'])->name('admin.clientes.data')->middleware('auth');
+Route::get('/admin/clientes/dataMora', [ClienteController::class, 'dataMora'])->name('admin.clientes.dataMora');
+Route::get('/admin/clientes/dataCorte', [ClienteController::class, 'dataCorte'])->name('admin.clientes.dataCorte');
+Route::get('/admin/clientes/mora', [ClienteController::class, 'mora'])->name('admin.clientes.clientesmora');
 Route::get('/admin/clientes', [ClienteController::class, 'index'])->name('admin.clientes.index')->middleware('auth');
 Route::get('/admin/clientes/list', [ClienteController::class, 'list'])->name('admin.clientes.list')->middleware('auth');
 Route::get('/admin/clientes/{id}', [ClienteController::class, 'show'])->name('admin.clientes.show')->middleware('auth');
@@ -63,5 +66,9 @@ Route::get('/admin/recibos/{id}', [ReciboController::class, 'ver'])->name('admin
 Route::get('/admin/recibos/{id}/pdf', [ReciboController::class, 'generarPDF'])->name('admin.recibos.pdf');
 Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard.index');
 
+// Vistas para los detalles de cada card:
+Route::get('/admin/clientes/en-mora', [ClienteController::class, 'enMora'])->name('admin.clientes.mora');
+Route::get('/admin/clientes/proximo-corte', [ClienteController::class, 'proxCorte'])->name('admin.clientes.prox_corte');
+Route::get('/admin/pagos/hoy', [PagoController::class, 'hoy'])->name('admin.pagos.hoy');
 
 

@@ -35,7 +35,6 @@
                                     <th style="text-align: center">Acción</th>
                                 </tr>
                             </thead>
-<a href=""></a>
                         </table>
                     </div>
                     <!-- /.card-body -->
@@ -79,6 +78,17 @@
                                         </div>
                                         <input type="text" class="form-control" id="correo" name="correo"
                                             value="{{ old('correo') }}" placeholder="Escriba aquí..." required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="">DNI</label><b> (*)</b>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-address-card"></i></span>
+                                            </div>
+                                            <input type="text" class="form-control" id="dni" name="dni"
+                                                value="{{ old('dni') }}" placeholder="Escriba aquí..." required>
+                                        </div>
+
                                     </div>
                                     <div class="form-group">
                                         <label for="">Telefono</label><b> (*)</b>

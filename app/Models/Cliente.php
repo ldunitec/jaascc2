@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Cliente extends Model
 {
 
-    protected $fillable = ['nombre', 'correo', 'telefono', 'direccion', 'activo'];
+    protected $fillable = ['nombre', 'dni','correo', 'telefono', 'direccion', 'activo'];
 
     public function mensualidades()
     {

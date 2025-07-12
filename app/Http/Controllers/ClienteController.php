@@ -37,6 +37,11 @@ class ClienteController extends Controller
         $clientes = Cliente::all();
         return view('admin.clientes.index', compact('clientes'));
     }
+    public function mora()
+    {
+        $clientes = Cliente::all();
+        return view('admin.clientes.clientes-mora', compact('clientes'));
+    }
 
 
     public function data()
@@ -60,6 +65,31 @@ class ClienteController extends Controller
                 </button>
                 <button class="btn btn-danger btn-sm btnDelete" data-id="' . $row->id . '">
                     <i class="fas fa-trash"></i>
+                </button>
+            </div>';
+            })
+
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+    public function dataMora()
+    {
+        $clientes  = Cliente::where(function ($query) {
+            $query->whereDoesntHave('pagos') // sin pagos en absoluto
+                ->orWhereDoesntHave('pagos', function ($subquery) {
+                    $subquery->whereColumn('created_at', '>', 'clientes.created_at');
+                });
+        })->get();
+        return DataTables::of($clientes)
+            ->addIndexColumn()
+
+            ->addColumn('action', function ($row) {
+                return '<div class="btn-group">
+                <button class="btn btn-info btn-sm btnPago" data-id="' . $row->id . '">
+                    <i class="fas fa-coins"></i>
+                </button>
+                <button class="btn btn-warning btn-sm btnHist" data-id="' . $row->id . '">
+                    <i class="fas fa-book"></i>
                 </button>
             </div>';
             })
@@ -92,6 +122,7 @@ class ClienteController extends Controller
         try {
             $validated = $request->validate([
                 'nombre' => 'required|string|max:255|unique:clientes,nombre',
+                'dni' => 'required|string|max:255|unique:clientes,dni',
                 'correo' => 'required|email|unique:clientes,correo',
                 'telefono' => 'required|unique:clientes,telefono',
                 'direccion' => 'required|string',
@@ -133,32 +164,31 @@ class ClienteController extends Controller
     /**
      * Update the specified resource in storage.
      */
- public function update(Request $request, $id)
-{
-    $cliente = Cliente::findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        $cliente = Cliente::findOrFail($id);
 
-    $request->validate([
-        'nombre' => 'required',
-        'correo' => 'required|email|unique:clientes,correo,' . $id,
-        'telefono' => 'required|unique:clientes,telefono,' . $id,
-        'direccion' => 'required',
-    ]);
+        $request->validate([
+            'nombre' => 'required',
+            'correo' => 'required|email|unique:clientes,correo,' . $id,
+            'telefono' => 'required|unique:clientes,telefono,' . $id,
+            'direccion' => 'required',
+        ]);
 
-    $cliente->update($request->all());
+        $cliente->update($request->all());
 
-    return response()->json(['message' => 'Cliente actualizado correctamente']);
-}
+        return response()->json(['message' => 'Cliente actualizado correctamente']);
+    }
 
 
     /**
      * Remove the specified resource from storage.
      */
-public function destroy($id)
-{
-    $cliente = Cliente::findOrFail($id);
-    $cliente->delete();
+    public function destroy($id)
+    {
+        $cliente = Cliente::findOrFail($id);
+        $cliente->delete();
 
-    return response()->json(['message' => 'Cliente eliminado correctamente']);
-}
-
+        return response()->json(['message' => 'Cliente eliminado correctamente']);
+    }
 }
