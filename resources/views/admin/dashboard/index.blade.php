@@ -6,7 +6,7 @@
     <div class="row">
 
         <!-- Card Total Clientes -->
-        <div class="col-lg-3 col-6">
+        <div class="col-lg-4 col-6">
             <div class="small-box bg-info" onclick="window.location='{{ route('admin.clientes.index') }}'">
                 <div class="inner">
                     <h3>{{ $totalClientes }}</h3>
@@ -17,7 +17,7 @@
         </div>
 
         <!-- Card Clientes en Mora -->
-        <div class="col-lg-3 col-6">
+        <div class="col-lg-4 col-6">
             <div class="small-box bg-danger" onclick="window.location='{{ route('admin.clientes.clientesmora') }}'">
                 <div class="inner">
                     <h3>{{ $clientesEnMora }}</h3>
@@ -28,7 +28,7 @@
         </div>
 
         <!-- Card Próximos a Corte -->
-        <div class="col-lg-3 col-6">
+        <div class="col-lg-4 col-6">
             <div class="small-box bg-warning" onclick="window.location='{{ route('admin.clientes.prox_corte') }}'">
                 <div class="inner">
                     <h3>{{ $clientesProxCorte }}</h3>
@@ -38,6 +38,16 @@
             </div>
         </div>
 
+              <!-- Card Cobros del mes -->
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-ligth" onclick="window.location='{{ route('admin.pagos.hoy') }}'">
+                <div class="inner">
+                    <h3>L {{number_format($totalMes,2)}} </h3>
+                    <p>Cobros del Mes</p>
+                </div>
+                <div  class="icon"><i class="fas fa-cash-register"></i></div>
+            </div>
+        </div>
 
         <!-- Card Cobros del Día -->
         <div class="col-lg-3 col-6">
@@ -49,16 +59,7 @@
                 <div class="icon"><i class="fas fa-cash-register"></i></div>
             </div>
         </div>
-        <!-- Card Cobros del mes -->
-        <div class="col-lg-3 col-6">
-            <div class="small-box bg-ligth" onclick="window.location='{{ route('admin.pagos.hoy') }}'">
-                <div class="inner">
-                    <h3>L </h3>
-                    <p>Cobros del Mes</p>
-                </div>
-                <div class="icon"><i class="fas fa-cash-register"></i></div>
-            </div>
-        </div>
+  
 
         <!-- Card Cobros del Día Efectivo -->
         <div class="col-lg-3 col-6">
@@ -145,7 +146,7 @@
                 datasets: [{
                     label: 'Total L.',
                     data: data,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    backgroundColor: 'rgba(54, 162, 200, 0.4)',
                     borderColor: 'blue',
                     borderWidth: 1
                 }]

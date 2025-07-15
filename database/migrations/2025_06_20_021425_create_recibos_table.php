@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('recibos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('cliente_id')->constrained()->onDelete('cascade');
-            $table->dateTime('fecha_emision');
-            $table->decimal('total_pagado', 10, 2);
-            $table->foreignId('usuario_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('metodo_pago')->default('Efectivo'); 
+            $table->string('referencia')->nullable(); 
+            $table->integer('recibo'); 
+            $table->decimal('monto', 8, 2)->default(100.00);
             $table->timestamps();
         });
     }

@@ -8,11 +8,14 @@ class Pago extends Model
 {
 
     protected $fillable = ['cliente_id','mes_pago','monto','recibo','metodo_pago','referencia'];
+protected $casts = [
+    'mes_pago' => 'date',
+];
 
 
-  public function pagos()
+  public function recibo()
 {
-    return $this->hasMany(Pago::class);
+    return $this->hasOne(Recibo::class);
 }
 
 public function mesesPendientes()

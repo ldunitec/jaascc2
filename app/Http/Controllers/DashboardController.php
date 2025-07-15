@@ -15,6 +15,15 @@ class DashboardController extends Controller
 
     public function index()
     {
+        $inicioMes = Carbon::now()->startOfMonth();
+        $finMes = Carbon::now()->endOfMonth();
+        $totalMes = Pago::whereBetween('created_at', [$inicioMes, $finMes])
+            ->sum('monto');
+        $totalAnio = Pago::whereYear(
+            'created_at',
+            Carbon::now()->year
+        )->sum('monto');
+
         $hoy = Carbon::now()->format('Y-m-d');
 
         $totalClientes = Cliente::count();
@@ -63,7 +72,7 @@ class DashboardController extends Controller
                 ? $pagoPorMesYMetodo->where('mes', $mes)->whereIn('metodo_pago', ['Transferencia', 'Depósito'])->sum('total')
                 : 0;
         }
-// return response()->json( $cobrosPorMes);
+        // return response()->json( $cobrosPorMes);
         return view('admin.dashboard.index', compact(
             'totalClientes',
             'clientesEnMora',
@@ -75,50 +84,9 @@ class DashboardController extends Controller
             'meses',
             'efectivo',
             'deposito',
-            'cobrosMensual'
+            'cobrosMensual',
+            'totalMes',
+            'totalAnio'
         ));
-
-
     }
-
-
-    // public function index()
-    // {
-    //     $totalClientes = Cliente::count();
-
-    //     $hoy = Carbon::now();
-    //     $añoActual = $hoy->year;
-    //     $mesActual = $hoy->format('F'); // Ej: 'June', 'July', etc.
-
-    //     // IDs de clientes con mensualidades pendientes hasta hoy
-    //     $clientesConMora = Mensualidad::where('estado', 'pendiente')
-    //         ->where(function ($query) use ($añoActual, $mesActual) {
-    //             $query->where('año', '<', $añoActual)
-    //                   ->orWhere(function ($q) use ($añoActual, $mesActual) {
-    //                       $q->where('año', $añoActual)
-    //                         ->where('mes', '<=', $mesActual);
-    //                   });
-    //         })
-    //         ->pluck('cliente_id')
-    //         ->unique();
-
-    //         $clientesMoraDetalle = Cliente::whereIn('id', $clientesConMora)
-    //         ->with(['mensualidades' => function($q) use ($añoActual, $mesActual) {
-    //             $q->where('estado', 'pendiente')
-    //               ->where(function ($query) use ($añoActual, $mesActual) {
-    //                   $query->where('año', '<', $añoActual)
-    //                         ->orWhere(function ($q) use ($añoActual, $mesActual) {
-    //                             $q->where('año', $añoActual)
-    //                               ->where('mes', '<=', $mesActual);
-    //                         });
-    //               });
-    //         }])
-    //         ->get();
-
-    //     $clientesEnMora = Cliente::whereIn('id', $clientesConMora)->count();
-    //     $clientesAlDia = $totalClientes - $clientesEnMora;
-
-    //     return view('admin.dashboard.index', compact('totalClientes', 'clientesEnMora', 'clientesAlDia','clientesMoraDetalle'));
-    // }
-    //
 }
