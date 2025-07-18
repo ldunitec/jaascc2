@@ -1,147 +1,99 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <title>Historial de Pagos</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-        }
+<style>
+    body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
+.container {
+    width: 90%;
+    margin: auto;
+    border: 1px solid #000;
+}
 
-        th,
-        td {
-            border: 1px solid #000;
-            padding: 6px;
-            text-align: center;
-        }
+.header {
+    display: flex;
+    border-bottom: 1px solid #000;
+}
 
-        th {
-            background-color: #f0f0f0;
-        }
+.logo {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border-right: 1px solid #e11313;
+}
 
-        .titulo {
-            text-align: center;
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
+.logo.right {
+    border-right: none;
+}
 
-        .container {
-            display: grid;
-            grid-template-areas:
-                "logo header"
-                "recibos recibos"
-                "meses meses";
-            grid-template-columns: 1fr 3fr;
-            gap: 5px;
-            background-color: #2196F3;
-            padding: 5px;
-        }
+.title {
+    flex: 2;
+    text-align: center;
+    padding: 10px;
+}
 
-        .container>div {
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 10px;
-        }
+.blue-bar {
+    height: 10px;
+    background-color: #3b6cc0;
+}
 
-        .container>div.header {
-            grid-area: header;
-            text-align: center;
-        }
+.section-title {
+    text-align: center;
+    padding: 10px;
+    margin: 0;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+}
 
+.table-container {
+    height: 400px; /* puedes ajustar este valor */
+    text-align: center;
+    padding: 20px;
+    border-bottom: 1px solid #000;
+}
 
-        .container>div.recibos {
-            grid-area: recibos;
-        }
+.footer {
+    text-align: center;
+    padding: 15px;
+    border-bottom: 1px solid #000;
+}
 
-        .container>div.meses {
-            grid-area: meses;
-        }
-           table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th, td {
-        border: 1px solid #ccc;
-        padding: 6px 10px;
-        text-align: left;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-    </style>
+</style>
 </head>
-
 <body>
-
-
     <div class="container">
-        <div class="logo"><img src="" alt=""></div>
-        <div class="header">
-            <P>
-            <h2>JAASCC</h2>
-            </P>
-            <p>protege el agua</p>
+        <!-- Encabezado -->
+        <header class="header">
+            <div class="logo left"><img src="{{ public_path('img/jaascc.png') }}" alt="Logo" style="max-height: 80px;"></div>
+            <div class="title">  <h3>JUNTA ADMINISTRADORA DE AGUA Y SANEAMIENTO
+                COL. EL CARPINTERO</h3></div>
+            <div class="logo right"><img src="{{ public_path('img/jaascc.png') }}" alt="Logo" style="max-height: 80px;"></div>
+        </header>
+
+        <!-- Línea azul superior -->
+        <div class="blue-bar"></div>
+
+        <!-- Título -->
+        <h2 class="section-title">Historial de pagos</h2>
+
+        <!-- Tabla -->
+        <div class="table-container">
+            <p>Tabla de historial</p>
+            <!-- Aquí puedes insertar una tabla real si lo deseas -->
         </div>
-        <hr>
 
-        <div class="recibos">
-         <div class="titulo">
-        <p> <h3>Historial de Pagos</h3></p>
-        <p> <h4>{{ $cliente->nombre }}</h4></p>
+        <!-- Logo inferior -->
+        <footer class="footer">
+            logo
+        </footer>
 
+        <!-- Línea azul inferior -->
+        <div class="blue-bar"></div>
     </div>
-<div>
-    <table>
-        <thead>
-            <tr>
-                <th>Recibo</th>
-                <th>Fecha</th>
-                <th>Mes Pagado</th>
-                <th>Método</th>
-                <th>Referencia</th>
-            </tr>
-        </thead>
-        <tbody>
-
-           @foreach ($historialAgrupado as $recibo => $pagos)
-    @foreach ($pagos as $index => $pago)
-        <tr>
-            @if ($index == 0)
-                <td rowspan="{{ $pagos->count() }}">{{ $recibo }}</td>
-            @endif
-            <td>{{ \Carbon\Carbon::parse($pago->fecha)->format('d/m/Y') }}</td>
-            <td>{{ $pago->mes_pago->translatedFormat('F Y') }}</td>
-            <td>{{ ucfirst($pago->metodo_pago) }}</td>
-            <td>{{ ucfirst($pago->referencia) }}</td>
-        </tr>
-    @endforeach
-@endforeach
-
-        </tbody>
-    </table>
-        </div>
-        <hr>
-        <div class="meses">
-            <h4>meses</h4>
-        </div>
-    </div>
-
-
-
-
-
-
-
-    
 </body>
-
 </html>

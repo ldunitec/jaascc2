@@ -1,0 +1,58 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    width: 90%;
+    margin: auto;
+    border: 1px solid #000;
+}
+
+.header {
+    display: flex;
+    border-bottom: 1px solid #000;
+}
+
+.logo {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border-right: 1px solid #000;
+}
+
+.logo.right {
+    border-right: none;
+}
+
+.title {
+    flex: 2;
+    text-align: center;
+    padding: 10px;
+}
+
+.blue-bar {
+    height: 10px;
+    background-color: #3b6cc0;
+}
+
+.section-title {
+    text-align: center;
+    padding: 10px;
+    margin: 0;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+}
+
+.table-container {
+    height: 400px; /* puedes ajustar este valor */
+    text-align: center;
+    padding: 20px;
+    border-bottom: 1px solid #000;
+}
+
+.footer {
+    text-align: center;
+    padding: 15px;
+    border-bottom: 1px solid #000;
+}
